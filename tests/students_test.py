@@ -1,3 +1,12 @@
+def test_root_route(client):
+    """
+    Test the root route to check if the app is ready
+    """
+    response = client.get('/')
+    assert response.status_code == 200
+    data = response.json
+    assert data['status'] == 'ready'
+
 def test_get_assignments_student_1(client, h_student_1):
     response = client.get(
         '/student/assignments',
@@ -86,3 +95,14 @@ def test_assignment_resubmit_error(client, h_student_1):
     assert response.status_code == 400
     assert error_response['error'] == 'FyleError'
     assert error_response["message"] == 'only a draft assignment can be submitted'
+
+
+def test_http_exception_handling(client):
+    """
+    Test handling of an HTTPException (404 NotFound)
+    """
+    response = client.get('/non-existent-route')
+    assert response.status_code == 404
+    data = response.json
+    assert data['error'] == 'NotFound'
+    assert '404 Not Found' in data['message']

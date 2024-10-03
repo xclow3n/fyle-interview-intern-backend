@@ -1,13 +1,17 @@
-#!/bin/bash
+#!/bin/ash
 
 # to stop on first error
 set -e
 
-# Delete older .pyc files
-# find . -type d \( -name env -o -name venv  \) -prune -false -o -name "*.pyc" -exec rm -rf {} \;
+# Install packages
+pip install virtualenv
+virtualenv env --python=python3.8
+source env/bin/activate
+pip install -r requirements.txt
 
-# Run required migrations
+# reset Database
 export FLASK_APP=core/server.py
+flask db upgrade -d core/migrations/
 
 # flask db init -d core/migrations/
 # flask db migrate -m "Initial migration." -d core/migrations/
